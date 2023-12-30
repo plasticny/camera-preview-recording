@@ -5,6 +5,10 @@ Simple android app using cordova camera preview plugin to record video
 - Vue + capacitor + typescript + scss
 - Recorded videos are saved in DCIM/Recordings
 
+## Cordova camera preview package
+Clone the cordova-plugin-camera-preview package from its github repo<br>
+The version installed by npm is not up-to-date
+
 ## Npm Commands
 
 ### Install package
