@@ -1,0 +1,53 @@
+#v_recording {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: end;
+}
+
+#v_recording #controller {
+  height: 80px;
+  width: 80px;
+  border-radius: 100%;
+  margin-bottom: 1rem;
+  border: 5px solid;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: border-color 0.2s;
+
+  #controller_inner {
+    border-radius: 100%;
+    transition: height 0.2s, width 0.2s, background-color 0.2s;
+  }
+
+  &:not(.recording) {
+    border-color: white;
+    #controller_inner {
+      height: 60px;
+      width: 60px;
+      background-color: white;
+    }
+  }
+  &.recording {
+    border-color: rgb(228, 43, 43);
+    #controller_inner {
+      height: 40px;
+      width: 40px;
+      background-color: rgb(228, 43, 43);
+    }
+  }
+}
+
+#v_recording #timer {
+  color: white;
+  font-size: 1.8rem;
+  margin-bottom: 0.5rem;
+
+  // black text border
+  text-shadow:  -1px 1px 0 #000, 
+                1px 1px 0 #000, 
+                1px -1px 0 #000,
+                -1px -1px 0 #000;
+}

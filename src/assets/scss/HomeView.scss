@@ -1,0 +1,24 @@
+#v_home {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background-color: whitesmoke;
+}
+
+#btn_open_camera {
+  font-size: 1.25rem;
+  padding: 1.2rem 2rem;
+
+  background: white;
+  width: fit-content;
+  border: 0;
+  border-radius: 0.5rem;
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+  cursor: pointer;
+
+  &:active {
+    transform: scale(0.95);
+  }
+}
