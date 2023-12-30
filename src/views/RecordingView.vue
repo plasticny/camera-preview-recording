@@ -45,7 +45,7 @@ onMounted(() => {
   })
 })
 
-// === function === //
+// === recording function === //
 async function start_recording () {
   if (!is_native) {
     is_recording.value = true
@@ -65,7 +65,6 @@ async function start_recording () {
     start_timer()
   })
 }
-
 async function stop_recording () {
   if (!is_native) {
     is_recording.value = false
@@ -74,12 +73,9 @@ async function stop_recording () {
   }
 
   // stop recording
-  let full_path = ''
-  CameraPreview.stopRecordVideo().then((result) => {
-    full_path = result
-    is_recording.value = false
-    stop_timer()
-  })
+  const full_path = await CameraPreview.stopRecordVideo()
+  is_recording.value = false
+  stop_timer()
 
   // ensure target dir is exist
   const target_dir_location = 'file:///storage/emulated/0/DCIM/'
@@ -102,7 +98,9 @@ async function stop_recording () {
     `${target_dir_location}${target_dir_name}/`, `video_${new Date().getTime()}.mp4`
   )
 }
+// === recording function === //
 
+// === timer function === //
 function start_timer () {
   timer.value = 0
   timer_interval_id = setInterval(() => {
@@ -110,18 +108,17 @@ function start_timer () {
     timer.value++
   }, 1000)
 }
-
 function stop_timer () {
   if (timer_interval_id) {
     clearInterval(timer_interval_id)
   }
 }
-
-function timer_to_min_sec (timer: number) {
+function timer_to_min_sec (timer: number) : string {
   const min = Math.floor(timer / 60)
   const sec = timer % 60
   return `${min}:${sec < 10 ? '0' + sec : sec}`
 }
+// === timer function === //
 </script>
 
 <style>
