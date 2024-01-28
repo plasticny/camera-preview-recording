@@ -26,16 +26,34 @@ const is_native = Capacitor.isNativePlatform()
 let timer_interval_id : number | undefined
 
 // === lifecycle === //
-onMounted(() => {
+onMounted(async function () {
   // start the preview camera
   if (!is_native) { return }
 
-  CameraPreview.startCamera({
+  await CameraPreview.startCamera({
     x: 0,
     y: 0,
     width: window.screen.width,
     height: window.screen.height,
     camera: CameraPreview.CAMERA_DIRECTION.BACK,
+    toBack: true,
+    tapPhoto: false,
+    tapFocus: true,
+    previewDrag: false,
+    storeToFile: false,
+    disableExifHeaderStripping: false
+  }).then((d) => {
+    console.log(d)
+  })
+
+  const front_width = window.screen.width / 4
+  const front_height = window.screen.height / 4
+  await CameraPreview.startCamera({
+    x: window.screen.width - front_width - 30,
+    y: 10,
+    width: front_width,
+    height: front_height,
+    camera: CameraPreview.CAMERA_DIRECTION.FRONT,
     toBack: true,
     tapPhoto: false,
     tapFocus: true,
@@ -54,16 +72,24 @@ async function start_recording () {
   }
 
   // start recording
-  CameraPreview.startRecordVideo({
+  await CameraPreview.startRecordVideo({
     cameraDirection: CameraPreview.CAMERA_DIRECTION.BACK,
     width: window.screen.width,
     height: window.screen.height,
     quality: 60,
     withFlash: true
-  }).then(() => {
-    is_recording.value = true
-    start_timer()
   })
+
+  await CameraPreview.startRecordVideo({
+    cameraDirection: CameraPreview.CAMERA_DIRECTION.FRONT,
+    width: window.screen.width,
+    height: window.screen.height,
+    quality: 60,
+    withFlash: true
+  })
+
+  is_recording.value = true
+  start_timer()
 }
 async function stop_recording () {
   if (!is_native) {
@@ -73,7 +99,12 @@ async function stop_recording () {
   }
 
   // stop recording
-  const full_path = await CameraPreview.stopRecordVideo()
+  const front_full_path = await CameraPreview.stopRecordVideo({
+    cameraDirection: CameraPreview.CAMERA_DIRECTION.FRONT
+  })
+  const back_full_path = await CameraPreview.stopRecordVideo({
+    cameraDirection: CameraPreview.CAMERA_DIRECTION.BACK
+  })
   is_recording.value = false
   stop_timer()
 
@@ -91,11 +122,17 @@ async function stop_recording () {
   }
 
   // more video to external data storage
-  const file_name = full_path.substring(full_path.lastIndexOf('/') + 1, full_path.length)
+  const front_file_name = front_full_path.substring(front_full_path.lastIndexOf('/') + 1, front_full_path.length)
+  const back_file_name = back_full_path.substring(back_full_path.lastIndexOf('/') + 1, back_full_path.length)
   await File.moveFile(
-    File.cacheDirectory, file_name,
+    File.cacheDirectory, front_file_name,
     // File.externalDataDirectory, `video_${new Date().getTime()}.mp4`
-    `${target_dir_location}${target_dir_name}/`, `video_${new Date().getTime()}.mp4`
+    `${target_dir_location}${target_dir_name}/`, `front_video_${new Date().getTime()}.mp4`
+  )
+  await File.moveFile(
+    File.cacheDirectory, back_file_name,
+    // File.externalDataDirectory, `video_${new Date().getTime()}.mp4`
+    `${target_dir_location}${target_dir_name}/`, `back_video_${new Date().getTime()}.mp4`
   )
 }
 // === recording function === //
